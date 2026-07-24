@@ -63,13 +63,16 @@ stages:
   rules: !reference [.fprintd_build_preconditions_rules]
 
 .install_libfprint_dev:
+  variables:
+    FP_BUILD_DIR: libfprint/_build
+    FP_CONFIGURE_OPTIONS: --prefix=/usr -Ddrivers=virtual_image,virtual_device,virtual_device_storage -Ddoc=false
+    FP_CONFIGURE_OPTIONS_OVERRIDES:
   before_script:
     # Make sure we don't build or link against the system libfprint
     - dnf remove -y libfprint-devel
     - git clone https://gitlab.freedesktop.org/libfprint/libfprint.git
-    - meson setup libfprint/_build libfprint --prefix=/usr -Ddrivers=virtual_image,virtual_device,virtual_device_storage -Ddoc=false
-    - meson compile -C libfprint/_build
-    - meson install -C libfprint/_build
+    - meson setup ${FP_BUILD_DIR} libfprint ${FP_CONFIGURE_OPTIONS} ${FP_CONFIGURE_OPTIONS_OVERRIDES}
+    - meson install -C ${FP_BUILD_DIR}
     # So we don't get error about this libfprint file
     - echo "libfprint/demo/gtk-libfprint-test.ui" >> po/POTFILES.skip
 
