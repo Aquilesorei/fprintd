@@ -37,10 +37,12 @@ class OutputChecker(object):
         self._reader_io = io.StringIO()
 
         # Just to be sure, shouldn't be a problem even if we didn't set it
+        fcntl.fcntl(self._pipe_fd_r, fcntl.F_SETFD,
+                    fcntl.fcntl(self._pipe_fd_r, fcntl.F_GETFD) | fcntl.FD_CLOEXEC)
         fcntl.fcntl(self._pipe_fd_r, fcntl.F_SETFL,
-                    fcntl.fcntl(self._pipe_fd_r, fcntl.F_GETFL) | os.O_CLOEXEC | os.O_NONBLOCK)
-        fcntl.fcntl(self._pipe_fd_w, fcntl.F_SETFL,
-                    fcntl.fcntl(self._pipe_fd_w, fcntl.F_GETFL) | os.O_CLOEXEC)
+                    fcntl.fcntl(self._pipe_fd_r, fcntl.F_GETFL) | os.O_NONBLOCK)
+        fcntl.fcntl(self._pipe_fd_w, fcntl.F_SETFD,
+                    fcntl.fcntl(self._pipe_fd_w, fcntl.F_GETFD) | fcntl.FD_CLOEXEC)
 
         # Start copier thread
         self._thread = threading.Thread(target=self._copy, daemon=True)
