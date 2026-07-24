@@ -160,6 +160,9 @@ test_dev:
   coverage: '/^TOTAL.*\s+(\d+\%)$/'
 
 test_dev_with_sanitizer:
+  variables:
+    FP_CONFIGURE_OPTIONS_OVERRIDES: -Db_sanitize=address,undefined
+    ASAN_OPTIONS: verify_asan_link_order=0
   extends:
     - .fprintd_build_preconditions
     - .install_libfprint_dev

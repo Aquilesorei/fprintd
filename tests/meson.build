@@ -168,6 +168,7 @@ if address_sanitizer
         'ASAN_OPTIONS=@0@'.format(':'.join([
             'abort_on_error=true',
             'symbolize=true',
+            'verify_asan_link_order=0',
         ])),
         'LSAN_OPTIONS=@0@'.format(':'.join([
             'exitcode=0',
