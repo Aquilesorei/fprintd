@@ -165,7 +165,7 @@ test_dev_with_sanitizer:
     - .install_libfprint_dev
   stage: test
   script:
-    - meson setup _build -Db_sanitize=address
+    - meson setup _build -Db_sanitize=address,undefined
     - meson test -C _build --print-errorlogs --no-stdsplit --timeout-multiplier 5
   artifacts:
     name: meson-logs
