@@ -193,7 +193,7 @@ if get_option('tests')
     endforeach
 endif
 
-address_sanitizer = get_option('b_sanitize') == 'address'
+address_sanitizer = 'address' in get_option('b_sanitize').split(',')
 
 cdata = configuration_data()
 cdata.set_quoted('GETTEXT_PACKAGE', meson.project_name())
