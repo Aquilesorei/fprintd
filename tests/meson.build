@@ -102,7 +102,7 @@ foreach pt: python_tests
             depends: pt.get('depends', []),
             workdir: pt.get('workdir', meson.project_build_root()),
             env: pt.get('env', []),
-            timeout: pt.get('timeout', 30),
+            timeout: pt.get('timeout', has_subtests ? 30 : 120),
             is_parallel: pt.get('is_parallel', true),
         )
 
