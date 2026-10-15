@@ -804,11 +804,9 @@ do_auth (pam_handle_t *pamh, const char *username)
       if (ret != PAM_SUCCESS)
         release_device (pamh, bus, data->dev);
 
-      sd_bus_close (bus);
       return ret;
     }
 
-  sd_bus_close (bus);
   return PAM_AUTHINFO_UNAVAIL;
 }
 

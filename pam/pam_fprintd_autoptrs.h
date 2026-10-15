@@ -54,7 +54,15 @@ autoptr_cleanup_generic_free (void *p)
 #define pf_auto(TypeName) \
         _CLEANUP_FUNC (_PF_AUTOPTR_FUNC_NAME (TypeName)) TypeName
 
-PF_DEFINE_AUTOPTR_CLEANUP_FUNC (sd_bus, sd_bus_unref)
+
+static inline void
+cleanup_sd_bus (sd_bus *bus)
+{
+  sd_bus_close (bus);
+  sd_bus_unref (bus);
+}
+
+PF_DEFINE_AUTOPTR_CLEANUP_FUNC (sd_bus, cleanup_sd_bus)
 PF_DEFINE_AUTOPTR_CLEANUP_FUNC (sd_bus_message, sd_bus_message_unref)
 PF_DEFINE_AUTOPTR_CLEANUP_FUNC (sd_bus_slot, sd_bus_slot_unref)
 
