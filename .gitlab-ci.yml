@@ -23,8 +23,7 @@ variables:
   FDO_DISTRIBUTION_VERSION: rawhide
   FDO_UPSTREAM_REPO: "libfprint/fprintd"
   FEDORA_IMAGE: "$CI_REGISTRY/libfprint/fprintd/fedora/$FDO_DISTRIBUTION_VERSION:$FDO_DISTRIBUTION_TAG"
-  DEPENDENCIES: dbus-glib-devel
-                gcc
+  DEPENDENCIES: gcc
                 gcovr
                 gettext
                 git
