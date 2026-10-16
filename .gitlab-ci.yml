@@ -21,8 +21,8 @@ variables:
   extends: .libfprint_common_variables
   FDO_DISTRIBUTION_TAG: latest
   FDO_DISTRIBUTION_VERSION: rawhide
-  FDO_UPSTREAM_REPO: "libfprint/$CI_PROJECT_NAME"
-  FEDORA_IMAGE: "$CI_REGISTRY/libfprint/$CI_PROJECT_NAME/fedora/$FDO_DISTRIBUTION_VERSION:$FDO_DISTRIBUTION_TAG"
+  FDO_UPSTREAM_REPO: "libfprint/fprintd"
+  FEDORA_IMAGE: "$CI_REGISTRY/libfprint/fprintd/fedora/$FDO_DISTRIBUTION_VERSION:$FDO_DISTRIBUTION_TAG"
   DEPENDENCIES: dbus-glib-devel
                 gcc
                 gcovr
