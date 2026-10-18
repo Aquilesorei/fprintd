@@ -31,18 +31,26 @@ typedef int (*storage_print_data_delete)(FpDevice   *dev,
 typedef GSList *(*storage_discover_prints)(FpDevice   *dev,
                                            const char *username);
 typedef GSList *(*storage_discover_users)(void);
+
+typedef int (*storage_persistent_data_save)(FpDevice *dev,
+                                            GError  **error);
+typedef int (*storage_persistent_data_load)(FpDevice *dev,
+                                            GError  **error);
+
 typedef int (*storage_init)(void);
 typedef int (*storage_deinit)(void);
 
 struct storage
 {
-  storage_init              init;
-  storage_deinit            deinit;
-  storage_print_data_save   print_data_save;
-  storage_print_data_load   print_data_load;
-  storage_print_data_delete print_data_delete;
-  storage_discover_prints   discover_prints;
-  storage_discover_users    discover_users;
+  storage_init                 init;
+  storage_deinit               deinit;
+  storage_print_data_save      print_data_save;
+  storage_print_data_load      print_data_load;
+  storage_print_data_delete    print_data_delete;
+  storage_persistent_data_save persistent_data_save;
+  storage_persistent_data_load persistent_data_load;
+  storage_discover_prints      discover_prints;
+  storage_discover_users       discover_users;
 };
 
 typedef struct storage fp_storage;

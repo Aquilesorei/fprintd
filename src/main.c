@@ -49,6 +49,8 @@ set_storage_file (void)
   store.print_data_save = &file_storage_print_data_save;
   store.print_data_load = &file_storage_print_data_load;
   store.print_data_delete = &file_storage_print_data_delete;
+  store.persistent_data_save = &file_storage_persistent_data_save;
+  store.persistent_data_load = &file_storage_persistent_data_load;
   store.discover_prints = &file_storage_discover_prints;
   store.discover_users = &file_storage_discover_users;
 }

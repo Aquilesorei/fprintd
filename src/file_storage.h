@@ -31,6 +31,11 @@ int file_storage_print_data_delete (FpDevice   *dev,
                                     FpFinger    finger,
                                     const char *username);
 
+gboolean file_storage_persistent_data_save (FpDevice *dev,
+                                            GError  **error);
+gboolean file_storage_persistent_data_load (FpDevice *dev,
+                                            GError  **error);
+
 int file_storage_init (void);
 
 int file_storage_deinit (void);

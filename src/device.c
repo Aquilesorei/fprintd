@@ -232,10 +232,14 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC (FprintDeviceActionUnset, auto_device_action_unset
 static void
 fprint_device_dispose (GObject *object)
 {
+  g_autoptr(GError) error = NULL;
   FprintDevice *self = (FprintDevice *) object;
   FprintDevicePrivate *priv = fprint_device_get_instance_private (self);
 
   g_hash_table_remove_all (priv->clients);
+
+  if (!store.persistent_data_save (priv->dev, &error))
+    g_warning ("Failed to save persistent data: %s", error->message);
 
   G_OBJECT_CLASS (fprint_device_parent_class)->dispose (object);
 }
@@ -374,6 +378,7 @@ on_temperature_changed (FprintDevice *rdev,
 static void
 fprint_device_constructed (GObject *object)
 {
+  g_autoptr(GError) error = NULL;
   FprintDevice *rdev = FPRINT_DEVICE (object);
   FprintDBusDevice *dbus_dev = FPRINT_DBUS_DEVICE (rdev);
   FprintDevicePrivate *priv = fprint_device_get_instance_private (rdev);
@@ -399,6 +404,9 @@ fprint_device_constructed (GObject *object)
                            G_CALLBACK (on_temperature_changed),
                            rdev, G_CONNECT_SWAPPED);
   on_temperature_changed (rdev, NULL, priv->dev);
+
+  if (!store.persistent_data_load (priv->dev, &error))
+    g_warning ("Failed to load persistent data: %s", error->message);
 
   G_OBJECT_CLASS (fprint_device_parent_class)->constructed (object);
 }
@@ -1154,6 +1162,10 @@ dev_close_cb (FpDevice *dev, GAsyncResult *res, void *user_data)
     }
 
   g_debug ("released device %d", priv->id);
+
+  if (!store.persistent_data_save (dev, &error))
+    g_warning ("Failed to save persistent data: %s",
+               error ? error->message : "unknown error");
 
   fprint_dbus_device_complete_release (FPRINT_DBUS_DEVICE (rdev),
                                        invocation);

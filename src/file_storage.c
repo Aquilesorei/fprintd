@@ -40,6 +40,7 @@
 #include "file_storage.h"
 
 #define FILE_STORAGE_PATH "/var/lib/fprint"
+#define PERSISTENT_DATA_DIR "0-persistent"
 #define DIR_PERMS 0700
 
 static char *storage_path = NULL;
@@ -351,6 +352,70 @@ file_storage_discover_users (void)
 
   g_dir_close (dir);
   return list;
+}
+
+gboolean
+file_storage_persistent_data_save (FpDevice *dev, GError **error)
+{
+  g_autofree gchar *dir = NULL;
+  g_autofree gchar *path = NULL;
+  g_autofree guint8 *cur_contents = NULL;
+  g_autofree guint8 *new_contents = NULL;
+  gsize cur_length = 0;
+  gsize new_length = 0;
+
+  if (!fp_device_get_persistent_data (dev, &new_contents, &new_length, error))
+    return FALSE;
+
+  dir = g_build_filename (get_storage_path (), PERSISTENT_DATA_DIR, fp_device_get_driver (dev), NULL);
+  path = g_build_filename (dir, fp_device_get_device_id (dev), NULL);
+
+  if (new_length == 0)
+    {
+      if (g_unlink (path) < 0)
+        {
+          if (errno == ENOENT)
+            return TRUE;
+
+          g_set_error (error,
+                       G_IO_ERROR,
+                       g_io_error_from_errno (errno),
+                       "Failed to delete persistent storage for driver/device %s/%s", fp_device_get_driver (dev), fp_device_get_device_id (dev));
+          return FALSE;
+        }
+      return TRUE;
+    }
+
+  if (g_mkdir_with_parents (dir, DIR_PERMS) < 0)
+    {
+      g_set_error (error,
+                   G_IO_ERROR,
+                   g_io_error_from_errno (errno),
+                   "Failed to create directory for persistent data storage");
+      return FALSE;
+    }
+
+  g_file_get_contents (path, (char **) &cur_contents, &cur_length, NULL);
+
+  if (new_length == cur_length && memcmp (new_contents, cur_contents, cur_length) == 0)
+    return TRUE;
+
+  return g_file_set_contents (path, new_contents, new_length, error);
+}
+
+gboolean
+file_storage_persistent_data_load (FpDevice *dev, GError **error)
+{
+  g_autofree gchar *path = NULL;
+  g_autofree gchar *contents;
+  gsize length;
+
+  path = g_build_filename (get_storage_path (), PERSISTENT_DATA_DIR, fp_device_get_driver (dev), fp_device_get_device_id (dev), NULL);
+
+  if (!g_file_get_contents (path, &contents, &length, error))
+    return FALSE;
+
+  return fp_device_set_persistent_data (dev, contents, length, error);
 }
 
 int
