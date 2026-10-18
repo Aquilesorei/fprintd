@@ -344,7 +344,7 @@ file_storage_discover_users (void)
   while ((ent = g_dir_read_name (dir)))
     {
       /* ent is a username */
-      if (*ent == 0)
+      if (*ent == 0 || g_str_equal (ent, PERSISTENT_DATA_DIR))
         continue;
 
       list = g_slist_prepend (list, g_strdup (ent));
@@ -407,8 +407,8 @@ gboolean
 file_storage_persistent_data_load (FpDevice *dev, GError **error)
 {
   g_autofree gchar *path = NULL;
-  g_autofree gchar *contents;
-  gsize length;
+  g_autofree gchar *contents = NULL;
+  gsize length = 0;
 
   path = g_build_filename (get_storage_path (), PERSISTENT_DATA_DIR, fp_device_get_driver (dev), fp_device_get_device_id (dev), NULL);
 
